@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Table from "react-bootstrap/Table";
+import { useCommonData } from "../data/DataTypeMaps";
 
 interface Record {
   recordId: number;
@@ -14,58 +15,10 @@ interface Record {
   date: string;
 }
 
-interface RecordTypeMap {
-  [key: string]: string;
-}
-
-interface ExpenseTypeMap {
-  [key: string]: string;
-}
-
-interface IncomeTypeMap {
-  [key: string]: string;
-}
-
-interface paymentTypeMap {
-  [key: string]: string;
-}
-
 function RecordPage() {
   const [records, setRecords] = useState<Record[] | null>(null);
-
-  const recordTypeMap: RecordTypeMap = {
-    EXPENSE: "지출",
-    INCOME: "수입",
-  };
-
-  const expenseTypeMap: ExpenseTypeMap = {
-    MEAL: "식비",
-    DAILY_NECESSARIES: "일상 용품",
-    SHOPPING: "쇼핑",
-    CULTURE: "문화 생활",
-    HEALTH: "건강",
-    EDUCATION: "교육",
-    TRAFFIC: "교통/차량",
-    MOBILE: "통신",
-    SAVING: "예적금",
-    EVENT: "경조사",
-    ETC: "기타",
-  };
-
-  const incomeTypeMap: IncomeTypeMap = {
-    SALARY: "급여",
-    BONUS: "상여",
-    ADDITIONAL_INCOME: "부수입",
-    ALLOWANCE: "용돈",
-    ETC: "기타",
-  };
-
-  const paymentTypeMap: paymentTypeMap = {
-    CARD: "카드",
-    TRANSFER: "계좌 이체",
-    CASH: "현금",
-    ETC: "기타",
-  };
+  const { recordTypeMap, expenseTypeMap, incomeTypeMap, paymentTypeMap } =
+    useCommonData();
 
   useEffect(() => {
     // 데이터를 받아오는 부분
@@ -106,11 +59,6 @@ function RecordPage() {
         <Table striped bordered hover>
           <thead>
             <tr>
-              {/* {Object.keys(records[0])
-                .filter((key) => key !== excludedField) // 필드 제외
-                .map((key) => (
-                  <th key={key}>{key}</th>
-                ))} */}
               <th>날짜</th>
               <th>지출/입금 구분</th>
               <th>소비/수입 타입</th>
@@ -121,17 +69,6 @@ function RecordPage() {
             </tr>
           </thead>
           <tbody>
-            {/* {records.map((record, rowIndex) => (
-              <tr key={rowIndex} onClick={() => handleRowClick()}>
-                {Object.entries(record)
-                  .filter(([key]) => key !== excludedField) // 필드 제외
-                  .map(([key, value], cellIndex) => (
-                    <td key={cellIndex} style={{ textAlign: "left" }}>
-                      {value}
-                    </td>
-                  ))}
-              </tr>
-            ))} */}
             {records.map((record, index) => (
               <tr key={index} onClick={() => handleRowClick()}>
                 <td>{formatDate(record.date)}</td>
