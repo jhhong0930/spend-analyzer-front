@@ -5,20 +5,19 @@ import { useCommonData } from "../data/DataTypeMaps";
 interface Record {
   recordId: number;
   recordType: string;
-  expenseType: string;
-  incomeType: string;
+  recordCategory: string;
   paymentType: string;
   cardId: number;
   content: string;
   detail: string;
   amount: number;
   date: string;
+  cardAlias: string;
 }
 
 function RecordPage() {
   const [records, setRecords] = useState<Record[] | null>(null);
-  const { recordTypeMap, expenseTypeMap, incomeTypeMap, paymentTypeMap } =
-    useCommonData();
+  const { recordTypeMap, recordCategoryMap, paymentTypeMap } = useCommonData();
 
   useEffect(() => {
     // 데이터를 받아오는 부분
@@ -58,30 +57,41 @@ function RecordPage() {
       {records ? (
         <Table striped bordered hover>
           <thead>
-            <tr>
+            <tr style={{ textAlign: "center" }}>
               <th>날짜</th>
-              <th>지출/입금 구분</th>
-              <th>소비/수입 타입</th>
-              <th>결제구분</th>
+              <th>구분</th>
+              <th>카테고리</th>
               <th>내역</th>
               <th>비고</th>
+              <th>결제구분</th>
               <th>금액</th>
             </tr>
           </thead>
           <tbody>
             {records.map((record, index) => (
-              <tr key={index} onClick={() => handleRowClick()}>
-                <td>{formatDate(record.date)}</td>
-                <td>{recordTypeMap[record.recordType]}</td>
-                <td>
-                  {record.recordType === "EXPENSE"
-                    ? expenseTypeMap[record.expenseType] || "?"
-                    : incomeTypeMap[record.incomeType] || "?"}
+              <tr
+                key={index}
+                onClick={() => handleRowClick()}
+                style={{ textAlign: "center" }}
+              >
+                {/* min 106 */}
+                <td style={{ width: 110 }}>{formatDate(record.date)}</td>
+                {/* min 45 */}
+                <td style={{ width: 60 }}>
+                  {recordTypeMap[record.recordType]}
                 </td>
-                <td>{paymentTypeMap[record.paymentType]}</td>
+                {/* min 77 */}
+                <td style={{ width: 110 }}>
+                  {recordCategoryMap[record.recordCategory]}
+                </td>
                 <td style={{ textAlign: "left" }}>{record.content}</td>
                 <td style={{ textAlign: "left" }}>{record.detail}</td>
-                <td style={{ textAlign: "right" }}>
+                <td style={{ width: 160 }}>
+                  {record.paymentType === "CARD"
+                    ? record.cardAlias
+                    : paymentTypeMap[record.paymentType]}
+                </td>
+                <td style={{ width: 110, textAlign: "right" }}>
                   {record.amount.toLocaleString()}
                 </td>
               </tr>

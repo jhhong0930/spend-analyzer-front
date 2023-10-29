@@ -2,8 +2,7 @@ import React, { createContext, useContext, ReactNode } from "react";
 
 interface CommonData {
   recordTypeMap: RecordTypeMap;
-  expenseTypeMap: ExpenseTypeMap;
-  incomeTypeMap: IncomeTypeMap;
+  recordCategoryMap: RecordCategoryMap;
   paymentTypeMap: PaymentTypeMap;
 }
 
@@ -11,11 +10,7 @@ interface RecordTypeMap {
   [key: string]: string;
 }
 
-interface ExpenseTypeMap {
-  [key: string]: string;
-}
-
-interface IncomeTypeMap {
+interface RecordCategoryMap {
   [key: string]: string;
 }
 
@@ -39,7 +34,7 @@ export const CommonDataProvider: React.FC<CommonDataProviderProps> = ({
       EXPENSE: "지출",
       INCOME: "수입",
     },
-    expenseTypeMap: {
+    recordCategoryMap: {
       MEAL: "식비",
       DAILY_NECESSARIES: "일상용품",
       SHOPPING: "쇼핑",
@@ -50,9 +45,6 @@ export const CommonDataProvider: React.FC<CommonDataProviderProps> = ({
       MOBILE: "통신",
       SAVING: "예적금",
       EVENT: "경조사",
-      ETC: "기타",
-    },
-    incomeTypeMap: {
       SALARY: "급여",
       BONUS: "상여",
       ADDITIONAL_INCOME: "부수입",
