@@ -7,7 +7,6 @@ interface Record {
   recordType: string;
   recordCategory: string;
   paymentType: string;
-  cardId: number;
   content: string;
   detail: string;
   amount: number;
@@ -53,7 +52,7 @@ function RecordPage() {
   }
 
   return (
-    <div style={{ padding: "20px" }}>
+    <div>
       {records ? (
         <Table striped bordered hover>
           <thead>

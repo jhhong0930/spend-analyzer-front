@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+/* .outer {
+  padding: ;
+} */
+
+.outer {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.side-menu {
+  width: 10%;
+  list-style-type: none;
+  /* font-size: 16px; */
+}
+
+.record-page {
+  width: 90%;
+}
