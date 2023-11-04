@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
-import Table from "react-bootstrap/Table";
+import React, { useState, useEffect, useCallback } from "react";
+import { Table, Button } from "react-bootstrap";
 import { useCommonData } from "../data/DataTypeMaps";
+import axios from "axios";
+import RecordModal from "./RecordModal";
+import "../style/RecordPage.css";
 
 interface Record {
-  recordId: number;
+  recordId?: number;
   recordType: string;
   recordCategory: string;
   paymentType: string;
@@ -11,24 +14,23 @@ interface Record {
   detail: string;
   amount: number;
   date: string;
-  cardAlias: string;
+  cardAlias?: string;
 }
 
 function RecordPage() {
   const [records, setRecords] = useState<Record[] | null>(null);
+  const [showModal, setShowModal] = useState(false);
   const { recordTypeMap, recordCategoryMap, paymentTypeMap } = useCommonData();
 
-  useEffect(() => {
-    // 데이터를 받아오는 부분
+  const fetchData = useCallback(() => {
     fetch("http://localhost:8080/records")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
-        return response.json(); // JSON 데이터로 파싱
+        return response.json();
       })
       .then((data: Record[]) => {
-        // 받아온 데이터를 Record 인터페이스로 저장
         setRecords(data);
         console.log(data);
       })
@@ -37,8 +39,23 @@ function RecordPage() {
       });
   }, []);
 
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
+
   const handleRowClick = () => {
     alert("OK!");
+  };
+
+  const handleAddRecord = (record: Record) => {
+    axios
+      .post("http://localhost:8080/records", record)
+      .then(() => {
+        fetchData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   function formatDate(dateString: string) {
@@ -53,53 +70,71 @@ function RecordPage() {
 
   return (
     <div>
-      {records ? (
-        <Table striped bordered hover>
-          <thead>
-            <tr style={{ textAlign: "center" }}>
-              <th>날짜</th>
-              <th>구분</th>
-              <th>카테고리</th>
-              <th>내역</th>
-              <th>비고</th>
-              <th>결제구분</th>
-              <th>금액</th>
-            </tr>
-          </thead>
-          <tbody>
-            {records.map((record, index) => (
-              <tr
-                key={index}
-                onClick={() => handleRowClick()}
-                style={{ textAlign: "center" }}
-              >
-                {/* min 106 */}
-                <td style={{ width: 110 }}>{formatDate(record.date)}</td>
-                {/* min 45 */}
-                <td style={{ width: 60 }}>
-                  {recordTypeMap[record.recordType]}
-                </td>
-                {/* min 77 */}
-                <td style={{ width: 110 }}>
-                  {recordCategoryMap[record.recordCategory]}
-                </td>
-                <td style={{ textAlign: "left" }}>{record.content}</td>
-                <td style={{ textAlign: "left" }}>{record.detail}</td>
-                <td style={{ width: 160 }}>
-                  {record.paymentType === "CARD"
-                    ? record.cardAlias
-                    : paymentTypeMap[record.paymentType]}
-                </td>
-                <td style={{ width: 110, textAlign: "right" }}>
-                  {record.amount.toLocaleString()}
-                </td>
+      <div className="top-menu">
+        <div className="search-area">
+          이곳에는 년도 월 선택 박스와 검색 버튼이 들어감
+        </div>
+        <div className="button-area">
+          <Button variant="outline-info" onClick={() => setShowModal(true)}>
+            추가
+          </Button>
+        </div>
+      </div>
+      <div className="content">
+        {records ? (
+          <Table striped bordered hover>
+            <thead>
+              <tr style={{ textAlign: "center" }}>
+                <th>날짜</th>
+                <th>구분</th>
+                <th>카테고리</th>
+                <th>내역</th>
+                <th>비고</th>
+                <th>결제구분</th>
+                <th>금액</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-      ) : (
-        <p>Loading...</p>
-      )}
+            </thead>
+            <tbody>
+              {records.map((record, index) => (
+                <tr
+                  key={index}
+                  onClick={() => handleRowClick()}
+                  style={{ textAlign: "center" }}
+                >
+                  {/* min 106 */}
+                  <td style={{ width: 110 }}>{formatDate(record.date)}</td>
+                  {/* min 45 */}
+                  <td style={{ width: 60 }}>
+                    {recordTypeMap[record.recordType]}
+                  </td>
+                  {/* min 77 */}
+                  <td style={{ width: 110 }}>
+                    {recordCategoryMap[record.recordCategory]}
+                  </td>
+                  <td style={{ textAlign: "left" }}>{record.content}</td>
+                  <td style={{ textAlign: "left" }}>{record.detail}</td>
+                  <td style={{ width: 160 }}>
+                    {record.paymentType === "CARD"
+                      ? record.cardAlias
+                      : paymentTypeMap[record.paymentType]}
+                  </td>
+                  <td style={{ width: 110, textAlign: "right" }}>
+                    {record.amount.toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+        ) : (
+          <p>Loading...</p>
+        )}
+      </div>
+
+      <RecordModal
+        showModal={showModal}
+        setShowModal={setShowModal}
+        onAddRecord={handleAddRecord}
+      />
     </div>
   );
 }
