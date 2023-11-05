@@ -20,6 +20,8 @@ interface Record {
 function RecordPage() {
   const [records, setRecords] = useState<Record[] | null>(null);
   const [showModal, setShowModal] = useState(false);
+  const [mode, setMode] = useState("");
+  const [originData, setOriginData] = useState<Record | null>(null);
   const { recordTypeMap, recordCategoryMap, paymentTypeMap } = useCommonData();
 
   const fetchData = useCallback(() => {
@@ -58,6 +60,39 @@ function RecordPage() {
       });
   };
 
+  const handleUpdateRecord = (record: Record) => {
+    axios
+      .post("http://localhost:8080/records/update", record)
+      .then(() => {
+        fetchData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleDeleteRecord = (recordId: number) => {
+    axios
+      .post(`http://localhost:8080/records/delete/${recordId}`)
+      .then(() => {
+        fetchData();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleAddButtonClick = () => {
+    setShowModal(true);
+    setMode("add");
+  };
+
+  const handleUpdateButtonClick = (record: Record) => {
+    setShowModal(true);
+    setMode("update");
+    setOriginData(record);
+  };
+
   function formatDate(dateString: string) {
     const date = new Date(dateString);
 
@@ -75,7 +110,7 @@ function RecordPage() {
           이곳에는 년도 월 선택 박스와 검색 버튼이 들어감
         </div>
         <div className="button-area">
-          <Button variant="outline-info" onClick={() => setShowModal(true)}>
+          <Button variant="outline-info" onClick={() => handleAddButtonClick()}>
             추가
           </Button>
         </div>
@@ -98,7 +133,7 @@ function RecordPage() {
               {records.map((record, index) => (
                 <tr
                   key={index}
-                  onClick={() => handleRowClick()}
+                  onClick={() => handleUpdateButtonClick(record)}
                   style={{ textAlign: "center" }}
                 >
                   {/* min 106 */}
@@ -131,9 +166,15 @@ function RecordPage() {
       </div>
 
       <RecordModal
+        key={originData ? originData.recordId : "add"}
         showModal={showModal}
         setShowModal={setShowModal}
         onAddRecord={handleAddRecord}
+        onUpdateRecord={handleUpdateRecord}
+        onDeleteRecord={handleDeleteRecord}
+        mode={mode === "add" ? "add" : "update"}
+        originData={originData}
+        setOriginData={setOriginData}
       />
     </div>
   );
