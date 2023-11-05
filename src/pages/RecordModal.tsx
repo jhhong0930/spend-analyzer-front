@@ -49,7 +49,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
   const [content, setContent] = useState<string>("");
   const [detail, setDetail] = useState<string>("");
   const [amount, setAmount] = useState<number>(0);
-  const today = new Date().toISOString().split("T")[0];
+  const today = getCurrentCustomFormattedDate();
   const [date, setDate] = useState(today);
   const [cardList, setCardList] = useState<Card[]>([]);
 
@@ -105,11 +105,14 @@ const RecordModal: React.FC<RecordModalProps> = ({
   };
 
   const handleConfirmRecord = () => {
+    // TODO 아래 getCurrentCustomFormattedDate 함수와 합칠수 있게끔 수정한다.
     const selectedDate = new Date(date);
-    const now = new Date();
-    const localDateTime = `${selectedDate.toISOString().split("T")[0]}T${
-      now.toTimeString().split(" ")[0]
-    }`;
+    const year = selectedDate.getFullYear();
+    const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = selectedDate.getDate().toString().padStart(2, "0");
+    const hours = selectedDate.getHours().toString().padStart(2, "0");
+    const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
+    const localDateTime = `${year}-${month}-${day}T${hours}:${minutes}:00`;
 
     if (mode === "add") {
       const record: Record = {
@@ -149,6 +152,17 @@ const RecordModal: React.FC<RecordModalProps> = ({
     }
   };
 
+  function getCurrentCustomFormattedDate() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    const hours = String(date.getHours()).padStart(2, "0");
+    const minutes = String(date.getMinutes()).padStart(2, "0");
+
+    return `${year}-${month}-${day}T${hours}:${minutes}`;
+  }
+
   return (
     <div>
       <Modal show={showModal} onHide={handleCloseModal} animation={true}>
@@ -162,7 +176,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
             <Form.Group controlId="date" style={{ paddingBottom: 10 }}>
               <Form.Label>날짜</Form.Label>
               <Form.Control
-                type="date"
+                type="datetime-local"
                 value={date}
                 onChange={(e) => setDate(e.target.value)}
               />

@@ -97,10 +97,12 @@ function RecordPage() {
     const date = new Date(dateString);
 
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // 월은 0부터 시작하므로 +1
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const day = date.getDate().toString().padStart(2, "0");
+    const hour = date.getHours().toString().padStart(2, "0");
+    const minute = date.getMinutes().toString().padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${year}.${month}.${day} ${hour}:${minute}`;
   }
 
   return (
@@ -137,7 +139,7 @@ function RecordPage() {
                   style={{ textAlign: "center" }}
                 >
                   {/* min 106 */}
-                  <td style={{ width: 110 }}>{formatDate(record.date)}</td>
+                  <td style={{ width: 145 }}>{formatDate(record.date)}</td>
                   {/* min 45 */}
                   <td style={{ width: 60 }}>
                     {recordTypeMap[record.recordType]}
