@@ -48,8 +48,8 @@ const RecordModal: React.FC<RecordModalProps> = ({
   const [cardId, setCardId] = useState<number | null>(null);
   const [content, setContent] = useState<string>("");
   const [detail, setDetail] = useState<string>("");
-  const [amount, setAmount] = useState<number>(0);
-  const today = getCurrentCustomFormattedDate();
+  const [amount, setAmount] = useState<number | undefined>(undefined);
+  const today = formatDate(undefined);
   const [date, setDate] = useState(today);
   const [cardList, setCardList] = useState<Card[]>([]);
 
@@ -105,14 +105,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
   };
 
   const handleConfirmRecord = () => {
-    // TODO 아래 getCurrentCustomFormattedDate 함수와 합칠수 있게끔 수정한다.
-    const selectedDate = new Date(date);
-    const year = selectedDate.getFullYear();
-    const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
-    const day = selectedDate.getDate().toString().padStart(2, "0");
-    const hours = selectedDate.getHours().toString().padStart(2, "0");
-    const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
-    const localDateTime = `${year}-${month}-${day}T${hours}:${minutes}:00`;
+    const localDateTime = formatDate(date);
 
     if (mode === "add") {
       const record: Record = {
@@ -152,16 +145,27 @@ const RecordModal: React.FC<RecordModalProps> = ({
     }
   };
 
-  function getCurrentCustomFormattedDate() {
-    const date = new Date();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    const hours = String(date.getHours()).padStart(2, "0");
-    const minutes = String(date.getMinutes()).padStart(2, "0");
+  function formatDate(inputDate: string | undefined) {
+    const selectedDate = inputDate ? new Date(inputDate) : new Date();
+    const year = selectedDate.getFullYear();
+    const month = (selectedDate.getMonth() + 1).toString().padStart(2, "0");
+    const day = selectedDate.getDate().toString().padStart(2, "0");
+    const hours = selectedDate.getHours().toString().padStart(2, "0");
+    const minutes = selectedDate.getMinutes().toString().padStart(2, "0");
 
     return `${year}-${month}-${day}T${hours}:${minutes}`;
   }
+
+  const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value;
+
+    if (!/^\d*$/.test(inputValue)) {
+      alert("숫자만 입력할 수 있습니다!");
+      return;
+    }
+
+    setAmount(inputValue === "" ? undefined : parseInt(inputValue, 10));
+  };
 
   return (
     <div>
@@ -273,8 +277,8 @@ const RecordModal: React.FC<RecordModalProps> = ({
               <Form.Label>금액</Form.Label>
               <Form.Control
                 type="text"
-                value={amount}
-                onChange={(e) => setAmount(parseInt(e.target.value, 10))}
+                value={amount === undefined ? "" : amount}
+                onChange={handleAmountChange}
               />
             </Form.Group>
           </Form>
