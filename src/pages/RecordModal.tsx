@@ -85,7 +85,7 @@ const RecordModal: React.FC<RecordModalProps> = ({
       setContent(originData.content);
       setDetail(originData.detail);
       setAmount(originData.amount);
-      setDate(originData.date.split("T")[0]);
+      setDate(formatDate(originData.date));
     }
   }, [mode, originData]);
 
