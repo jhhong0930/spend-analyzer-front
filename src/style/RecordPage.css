@@ -6,7 +6,12 @@
 }
 
 .search-area {
-  /* padding-left: 5px; */
+  display: flex;
+}
+
+.search-form {
+  width: 200px;
+  margin-right: 10px;
 }
 
 .button-area {

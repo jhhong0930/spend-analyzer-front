@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Table, Button } from "react-bootstrap";
+import { Table, Button, Form } from "react-bootstrap";
 import { useCommonData } from "../data/DataTypeMaps";
 import axios from "axios";
 import RecordModal from "./RecordModal";
@@ -17,43 +17,100 @@ interface Record {
   cardAlias?: string;
 }
 
-function RecordPage() {
+interface SearchRecordRequest {
+  recordType?: string;
+  recordCategory?: string;
+  paymentType?: string;
+  cardId?: number;
+  start?: string;
+  end?: string;
+}
+
+interface RecordPageProps {}
+
+const RecordPage: React.FC<RecordPageProps> = () => {
+  const defaultStartDate = formatSearchStartDate();
+  const defaultEndDate = formatSearchEndDate();
+
+  function formatSearchStartDate() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const firstDay = new Date(year, date.getMonth(), 1);
+    const firstDayFormatted = firstDay.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${firstDayFormatted}T00:00`;
+  }
+
+  function formatSearchEndDate() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const lastDay = new Date(year, date.getMonth() + 1, 0);
+    const lastDayFormatted = lastDay.getDate().toString().padStart(2, "0");
+
+    return `${year}-${month}-${lastDayFormatted}T23:59`;
+  }
+
   const [records, setRecords] = useState<Record[] | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [mode, setMode] = useState("");
   const [originData, setOriginData] = useState<Record | null>(null);
   const { recordTypeMap, recordCategoryMap, paymentTypeMap } = useCommonData();
 
-  const fetchData = useCallback(() => {
-    fetch("http://localhost:8080/records")
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data: Record[]) => {
-        setRecords(data);
-        console.log(data);
-      })
-      .catch((error) => {
-        console.error("There was a problem with the fetch operation:", error);
-      });
-  }, []);
+  const [tempSearchStartDate, setTempSearchStartDate] =
+    useState<string>(defaultStartDate);
+  const [tempSearchEndDate, setTempSearchEndDate] =
+    useState<string>(defaultEndDate);
+  const [searchStartDate, setSearchStartDate] =
+    useState<string>(tempSearchStartDate);
+  const [searchEndDate, setSearchEndDate] = useState<string>(tempSearchEndDate);
+
+  const fetchData = useCallback(
+    ({
+      searchStartDate,
+      searchEndDate,
+    }: {
+      searchStartDate: string;
+      searchEndDate: string;
+    }) => {
+      const searchRecordRequest: SearchRecordRequest = {};
+
+      if (searchStartDate) {
+        searchRecordRequest.start = searchStartDate;
+      }
+
+      if (searchEndDate) {
+        searchRecordRequest.end = searchEndDate;
+      }
+
+      axios
+        .post("http://localhost:8080/records/list", searchRecordRequest)
+        .then((response) => {
+          setRecords(response.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+    []
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
-
-  const handleRowClick = () => {
-    alert("OK!");
-  };
+    fetchData({
+      searchStartDate,
+      searchEndDate,
+    });
+  }, [fetchData, searchEndDate, searchStartDate]);
 
   const handleAddRecord = (record: Record) => {
     axios
       .post("http://localhost:8080/records", record)
       .then(() => {
-        fetchData();
+        fetchData({
+          searchStartDate,
+          searchEndDate,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -64,7 +121,10 @@ function RecordPage() {
     axios
       .post("http://localhost:8080/records/update", record)
       .then(() => {
-        fetchData();
+        fetchData({
+          searchStartDate,
+          searchEndDate,
+        });
       })
       .catch((err) => {
         console.log(err);
@@ -75,11 +135,19 @@ function RecordPage() {
     axios
       .post(`http://localhost:8080/records/delete/${recordId}`)
       .then(() => {
-        fetchData();
+        fetchData({
+          searchStartDate,
+          searchEndDate,
+        });
       })
       .catch((err) => {
         console.log(err);
       });
+  };
+
+  const handleSearchButtonClick = () => {
+    setSearchStartDate(tempSearchStartDate);
+    setSearchEndDate(tempSearchEndDate);
   };
 
   const handleAddButtonClick = () => {
@@ -109,7 +177,24 @@ function RecordPage() {
     <div>
       <div className="top-menu">
         <div className="search-area">
-          이곳에는 년도 월 선택 박스와 검색 버튼이 들어감
+          <Form.Control
+            type="datetime-local"
+            value={tempSearchStartDate}
+            onChange={(e) => setTempSearchStartDate(e.target.value)}
+            className="search-form"
+          />
+          <Form.Control
+            type="datetime-local"
+            value={tempSearchEndDate}
+            onChange={(e) => setTempSearchEndDate(e.target.value)}
+            className="search-form"
+          />
+          <Button
+            variant="outline-secondary"
+            onClick={() => handleSearchButtonClick()}
+          >
+            검색
+          </Button>
         </div>
         <div className="button-area">
           <Button variant="outline-info" onClick={() => handleAddButtonClick()}>
@@ -180,6 +265,6 @@ function RecordPage() {
       />
     </div>
   );
-}
+};
 
 export default RecordPage;
