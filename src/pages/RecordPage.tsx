@@ -4,6 +4,7 @@ import { useCommonData } from "../data/DataTypeMaps";
 import axios from "axios";
 import RecordModal from "./RecordModal";
 import "../style/RecordPage.css";
+import api from "../api";
 
 interface Record {
   recordId?: number;
@@ -84,8 +85,8 @@ const RecordPage: React.FC<RecordPageProps> = () => {
         searchRecordRequest.end = searchEndDate;
       }
 
-      axios
-        .post("http://localhost:8080/records/list", searchRecordRequest)
+      api
+        .post("/records/list", searchRecordRequest)
         .then((response) => {
           setRecords(response.data);
         })
@@ -104,8 +105,8 @@ const RecordPage: React.FC<RecordPageProps> = () => {
   }, [fetchData, searchEndDate, searchStartDate]);
 
   const handleAddRecord = (record: Record) => {
-    axios
-      .post("http://localhost:8080/records", record)
+    api
+      .post("/records", record)
       .then(() => {
         fetchData({
           searchStartDate,
@@ -118,8 +119,8 @@ const RecordPage: React.FC<RecordPageProps> = () => {
   };
 
   const handleUpdateRecord = (record: Record) => {
-    axios
-      .post("http://localhost:8080/records/update", record)
+    api
+      .post("/records/update", record)
       .then(() => {
         fetchData({
           searchStartDate,
@@ -132,8 +133,8 @@ const RecordPage: React.FC<RecordPageProps> = () => {
   };
 
   const handleDeleteRecord = (recordId: number) => {
-    axios
-      .post(`http://localhost:8080/records/delete/${recordId}`)
+    api
+      .post(`/records/delete/${recordId}`)
       .then(() => {
         fetchData({
           searchStartDate,
