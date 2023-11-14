@@ -2,7 +2,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 5px;
+  margin-bottom: 10px;
 }
 
 .search-area {
@@ -16,4 +16,16 @@
 
 .button-area {
   /* padding-right: 5px; */
+}
+
+.record-type-expense {
+  color: blue !important;
+  width: 110px;
+  text-align: right;
+}
+
+.record-type-income {
+  color: red !important;
+  width: 110px;
+  text-align: right;
 }

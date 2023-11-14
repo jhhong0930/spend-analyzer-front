@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Table, Button, Form } from "react-bootstrap";
 import { useCommonData } from "../data/DataTypeMaps";
-import axios from "axios";
 import RecordModal from "./RecordModal";
 import "../style/RecordPage.css";
 import api from "../api";
@@ -89,6 +88,7 @@ const RecordPage: React.FC<RecordPageProps> = () => {
         .post("/records/list", searchRecordRequest)
         .then((response) => {
           setRecords(response.data);
+          console.log(response.data);
         })
         .catch((err) => {
           console.log(err);
@@ -241,7 +241,13 @@ const RecordPage: React.FC<RecordPageProps> = () => {
                       ? record.cardAlias
                       : paymentTypeMap[record.paymentType]}
                   </td>
-                  <td style={{ width: 110, textAlign: "right" }}>
+                  <td
+                    className={
+                      record.recordType === "EXPENSE"
+                        ? "record-type-expense"
+                        : "record-type-income"
+                    }
+                  >
                     {record.amount.toLocaleString()}
                   </td>
                 </tr>
