@@ -225,18 +225,20 @@ const RecordPage: React.FC<RecordPageProps> = () => {
                   style={{ textAlign: "center" }}
                 >
                   {/* min 106 */}
-                  <td style={{ width: 145 }}>{formatDate(record.date)}</td>
+                  <td style={{ width: 145, minWidth: 145 }}>
+                    {formatDate(record.date)}
+                  </td>
                   {/* min 45 */}
-                  <td style={{ width: 60 }}>
+                  <td style={{ width: 60, minWidth: 60 }}>
                     {recordTypeMap[record.recordType]}
                   </td>
                   {/* min 77 */}
-                  <td style={{ width: 110 }}>
+                  <td style={{ width: 110, minWidth: 110 }}>
                     {recordCategoryMap[record.recordCategory]}
                   </td>
                   <td style={{ textAlign: "left" }}>{record.content}</td>
                   <td style={{ textAlign: "left" }}>{record.detail}</td>
-                  <td style={{ width: 160 }}>
+                  <td style={{ width: 160, minWidth: 160 }}>
                     {record.paymentType === "CARD"
                       ? record.cardAlias
                       : paymentTypeMap[record.paymentType]}
