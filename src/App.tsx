@@ -15,7 +15,7 @@ function App() {
           <div className="side-menu">
             <SideMenu />
           </div>
-          <div className="record-page">
+          <div className="content-area">
             <Switch>
               <Route exact path="/">
                 <MainPage />

@@ -38,18 +38,14 @@
 }
 
 .outer {
-  padding: 20px;
+  padding: 10px;
   display: flex;
   justify-content: space-between;
   width: 100%;
 }
 
-.side-menu {
-  width: 10%;
-  list-style-type: none;
-  /* font-size: 16px; */
-}
-
-.record-page {
-  width: 90%;
+.content-area {
+  flex-grow: 1;
+  padding-top: 5px;
+  padding-left: 10px;
 }

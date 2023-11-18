@@ -4,6 +4,10 @@ import { useCommonData } from "../data/DataTypeMaps";
 import RecordModal from "./RecordModal";
 import "../style/RecordPage.css";
 import api from "../api";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import SearchIcon from "@mui/icons-material/Search";
+import SearchTwoToneIcon from "@mui/icons-material/SearchTwoTone";
 
 interface Record {
   recordId?: number;
@@ -190,17 +194,24 @@ const RecordPage: React.FC<RecordPageProps> = () => {
             onChange={(e) => setTempSearchEndDate(e.target.value)}
             className="search-form"
           />
-          <Button
-            variant="outline-secondary"
-            onClick={() => handleSearchButtonClick()}
-          >
-            검색
-          </Button>
+          <ListItemIcon style={{ alignItems: "center" }}>
+            <SearchIcon
+              sx={{ fontSize: 32 }}
+              style={{ cursor: "pointer" }}
+              onClick={() => handleSearchButtonClick()}
+            />
+          </ListItemIcon>
         </div>
         <div className="button-area">
-          <Button variant="outline-info" onClick={() => handleAddButtonClick()}>
-            추가
-          </Button>
+          <ListItemIcon
+            style={{ alignItems: "center", justifyContent: "center" }}
+          >
+            <AddCircleOutlineIcon
+              sx={{ fontSize: 36 }}
+              style={{ cursor: "pointer" }}
+              onClick={() => handleAddButtonClick()}
+            />
+          </ListItemIcon>
         </div>
       </div>
       <div className="content">

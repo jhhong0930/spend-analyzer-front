@@ -15,7 +15,7 @@
 }
 
 .button-area {
-  /* padding-right: 5px; */
+  display: flex;
 }
 
 .record-type-expense {
