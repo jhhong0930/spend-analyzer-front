@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button, Form } from "react-bootstrap";
 import { useCommonData } from "../data/DataTypeMaps";
+import api from "../api";
 
 interface Record {
   recordId?: number;
@@ -55,22 +56,17 @@ const RecordModal: React.FC<RecordModalProps> = ({
 
   useEffect(() => {
     if (paymentType === "CARD") {
-      fetch("http://localhost:8080/cards")
+      api
+        .get("/cards")
         .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const cardList = data.map((card: Card) => ({
+          const cardList = response.data.map((card: Card) => ({
             cardId: card.cardId,
             cardAlias: card.cardAlias,
           }));
           setCardList(cardList);
         })
         .catch((error) => {
-          console.error("There was a problem with the fetch operation:", error);
+          console.log(error);
         });
     }
   }, [paymentType]);
