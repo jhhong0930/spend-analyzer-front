@@ -236,7 +236,7 @@ const RecordPage: React.FC<RecordPageProps> = () => {
                   style={{ textAlign: "center" }}
                 >
                   {/* min 106 */}
-                  <td style={{ width: 145, minWidth: 145 }}>
+                  <td style={{ width: 150, minWidth: 145 }}>
                     {formatDate(record.date)}
                   </td>
                   {/* min 45 */}
